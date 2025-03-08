@@ -1,0 +1,244 @@
+openapi: 3.0.0
+info:
+  title: Cafe Manager API
+  description: API для управления заказами в кафе.
+  version: 1.0.0
+  contact:
+    name: Support
+    email: support@cafe.com
+
+servers:
+  - url: http://127.0.0.1:8000/api/
+    description: Локальный сервер разработки
+
+paths:
+  /orders/:
+    get:
+      summary: Получить список заказов
+      operationId: getOrders
+      tags:
+        - Orders
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [pending, ready, paid]
+          description: Фильтр по статусу заказа
+      responses:
+        "200":
+          description: Список заказов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+
+    post:
+      summary: Создать новый заказ
+      operationId: createOrder
+      tags:
+        - Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderInput"
+      responses:
+        "201":
+          description: Заказ создан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+
+  /orders/{id}/:
+    get:
+      summary: Получить заказ по ID
+      operationId: getOrder
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID заказа
+      responses:
+        "200":
+          description: Заказ найден
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+
+    put:
+      summary: Полностью обновить заказ (замена всех данных)
+      operationId: updateOrder
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderInput"
+      responses:
+        "200":
+          description: Заказ обновлен
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+
+    patch:
+      summary: Частично обновить заказ (изменение статуса или блюд)
+      operationId: patchOrder
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderPatch"
+      responses:
+        "200":
+          description: Заказ обновлен
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+
+    delete:
+      summary: Удалить заказ
+      operationId: deleteOrder
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Заказ удален
+
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 4
+        table_number:
+          type: integer
+          example: 10
+        status:
+          type: string
+          enum: [pending, ready, paid]
+          example: pending
+        total_price:
+          type: number
+          format: float
+          example: 75.50
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+
+    OrderInput:
+      type: object
+      properties:
+        table_number:
+          type: integer
+          example: 10
+        status:
+          type: string
+          enum: [pending, ready, paid]
+          example: pending
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItemInput"
+
+    OrderPatch:
+      type: object
+      properties:
+        table_number:
+          type: integer
+          example: 10
+        status:
+          type: string
+          enum: [pending, ready, paid]
+          example: ready
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItemPatch"
+
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 15
+        name:
+          type: string
+          example: Паста Карбонара
+        price:
+          type: number
+          format: float
+          example: 55.00
+        quantity:
+          type: integer
+          example: 1
+
+    OrderItemInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Паста Карбонара
+        price:
+          type: number
+          format: float
+          example: 55.00
+        quantity:
+          type: integer
+          example: 1
+
+    OrderItemPatch:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 15
+        name:
+          type: string
+          example: Паста Карбонара
+        price:
+          type: number
+          format: float
+          example: 55.00
+        quantity:
+          type: integer
+          example: 1

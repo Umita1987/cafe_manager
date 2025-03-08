@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2 class="mb-4"><i class="fas fa-chart-line text-success"></i> Выручка за смену</h2>
+
+    <div class="alert alert-success p-4 shadow-lg rounded">
+        <h3 class="display-5 font-weight-bold">
+            <i class="fas fa-coins"></i> {{ total_revenue }} PLN
+        </h3>
+        <p class="lead">Общий доход за текущую смену</p>
+    </div>
+
+    <a href="{% url 'order_list' %}" class="btn btn-primary btn-lg mt-3">
+        <i class="fas fa-arrow-left"></i> Вернуться к заказам
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">{% if object %}Редактировать заказ{% else %}Создать заказ{% endif %}</h2>
+
+    <form method="post" class="card p-4 shadow">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            {{ form.as_p }}
+        </div>
+
+        <h4 class="mb-3">Блюда:</h4>
+        {{ items.management_form }}
+
+        <div id="items-formset">
+            {% for form in items.forms %}
+                <div class="card mb-2 p-3 item-form">
+                    {{ form.as_p }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Кнопка "Добавить блюдо" теперь компактнее -->
+        <div class="d-flex justify-content-start mb-3">
+            <button type="button" id="add-item" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-plus"></i> Добавить блюдо
+            </button>
+        </div>
+
+        <!-- Контейнер для кнопок, выровненных слева в одном ряду -->
+        <div class="d-flex justify-content-start gap-2 mt-3">
+            <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-save"></i> Сохранить</button>
+            <a href="{% url 'order_list' %}" class="btn btn-primary btn-sm"><i class="fas fa-arrow-left"></i> Вернуться к заказам</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('add-item').onclick = function() {
+        const formset = document.getElementById('items-formset');
+        const totalForms = document.getElementById('id_items-TOTAL_FORMS');
+        const currentFormCount = parseInt(totalForms.value);
+        const emptyFormHtml = document.querySelector('.item-form').innerHTML
+            .replace(/items-\d+/g, `items-${currentFormCount}`);
+
+        const newForm = document.createElement('div');
+        newForm.classList.add('card', 'mb-2', 'p-3', 'item-form');
+        newForm.innerHTML = emptyFormHtml;
+        formset.appendChild(newForm);
+
+        totalForms.value = currentFormCount + 1;
+    };
+</script>
+{% endblock %}
